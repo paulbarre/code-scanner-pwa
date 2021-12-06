@@ -3,10 +3,12 @@ version: 2.1
 jobs:
   build:
     docker:
-      - image: cimg/node:16
-    working_directory: ~/repo
+      - image: node:16
+    working_directory: ~/
     steps:
       - checkout
+      - run: pwd
+      - run: ls
       - run:
           name: Install dependencies
           command: npm i --production
