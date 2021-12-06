@@ -25,10 +25,11 @@ jobs:
     steps:
       - attach_workspace:
           at: dist
+      - run: pwd
+      - run: ls
       - run:
           name: Install and configure dependencies
-          command:
-            npm install -g --silent gh-pages
+          command: npm install -g --silent gh-pages
       - run:
           name: Deploy to gh-pages branch
           command: gh-pages --dist dist
