@@ -7,13 +7,21 @@ jobs:
         user: node
     steps:
       - checkout
+      - restore_cache:
+          keys:
+            - dependencies
       - run:
           name: Install dependencies
           command: npm i
+      - save_cache:
+          paths:
+            - "node_modules"
+          key: dependencies
       - run:
           name: Build application
           command: npm run build
       - run: npm i -D gh-pages
+      - run: apk add git
       - run: git config user.email "19966190+paulbarre@users.noreply.github.com"
       - run: git config user.name "Paul Barré"
       - run:
