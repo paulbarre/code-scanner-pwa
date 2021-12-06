@@ -23,6 +23,9 @@ jobs:
       - run: npm i -D gh-pages
       - run: git config user.email "19966190+paulbarre@users.noreply.github.com"
       - run: git config user.name "Paul Barré"
+      - add_ssh_keys:
+          fingerprints:
+            - "08:d9:bc:f6:25:70:d6:e3:57:14:fc:e9:d1:ef:a3:47"
       - run:
           name: Deploy to gh-pages branch
           command: npx gh-pages --dist dist
