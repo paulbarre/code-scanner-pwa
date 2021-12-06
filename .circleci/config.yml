@@ -5,7 +5,6 @@ jobs:
     docker:
       - image: node:16
         user: node
-    working_directory: ~/
     steps:
       - checkout
       - run: pwd
