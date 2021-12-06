@@ -21,7 +21,6 @@ jobs:
           name: Build application
           command: npm run build
       - run: npm i -D gh-pages
-      - run: apk add git
       - run: git config user.email "19966190+paulbarre@users.noreply.github.com"
       - run: git config user.name "Paul Barré"
       - run:
