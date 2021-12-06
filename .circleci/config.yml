@@ -6,6 +6,7 @@ jobs:
       - image: node:16
         user: node
     steps:
+      - checkout
       - run:
           name: Install dependencies
           command: npm i --production
