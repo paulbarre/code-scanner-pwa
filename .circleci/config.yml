@@ -33,4 +33,7 @@ jobs:
 workflows:
   deploy-gh-pages:
     jobs:
-      - build-and-deploy
+      - build-and-deploy:
+          filters:
+            branches:
+              only: published
