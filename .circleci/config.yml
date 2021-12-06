@@ -28,6 +28,8 @@ jobs:
       - run: cd dist
       - run: npm init -y
       - run: npm i -D gh-pages
+      - run: git config user.email "19966190+paulbarre@users.noreply.github.com"
+      - run: git config user.name "Paul Barré"
       - run:
           name: Deploy to gh-pages branch
           command: npx gh-pages --dist .
