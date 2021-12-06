@@ -25,14 +25,9 @@ jobs:
     steps:
       - attach_workspace:
           at: dist
-      - run: pwd
-      - run: ls
-      - run:
-          name: Install gh-pages package
-          command: npm i -g gh-pages
       - run:
           name: Deploy to gh-pages branch
-          command: gh-pages --dist dist
+          command: npx gh-pages --dist dist
 
 workflows:
   deploy-gh-pages:
