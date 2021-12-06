@@ -3,7 +3,7 @@ version: 2.1
 jobs:
   build-and-deploy:
     docker:
-      - image: node:16-alpine3.14
+      - image: node:16
         user: node
     steps:
       - checkout
