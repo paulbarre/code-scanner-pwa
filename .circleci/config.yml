@@ -1,0 +1,39 @@
+version: 2.1
+
+jobs:
+  build:
+    docker:
+      - image: node:16
+        user: node
+    steps:
+      - run:
+          name: Install dependencies
+          command: npm i --production
+      - run:
+          name: Build application
+          command: npm run build
+      - persist_to_workspace:
+          root: "~"
+          paths:
+            - "dist"
+
+  deploy-gh-pages:
+    docker:
+      - image: node:16
+        user: node
+    steps:
+      - attach_workspace:
+          at: "dist"
+      - run:
+          name: Install and configure dependencies
+          command:
+            npm install -g --silent gh-pages
+      - run:
+          name: Deploy to gh-pages branch
+          command: gh-pages --dist dist
+
+workflows:
+  deploy-gh-pages:
+    jobs:
+      - build
+      - deploy-gh-pages
