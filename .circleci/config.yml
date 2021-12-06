@@ -21,13 +21,13 @@ jobs:
   deploy-gh-pages:
     docker:
       - image: node:16-alpine3.14
-        user: node
     steps:
       - attach_workspace:
           at: dist
       - run: cd dist
       - run: npm init -y
       - run: npm i -D gh-pages
+      - run: apk add git
       - run: git config user.email "19966190+paulbarre@users.noreply.github.com"
       - run: git config user.name "Paul Barré"
       - run:
@@ -38,4 +38,6 @@ workflows:
   deploy-gh-pages:
     jobs:
       - build
-      - deploy-gh-pages
+      - deploy-gh-pages:
+          requires:
+            - build
