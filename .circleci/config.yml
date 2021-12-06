@@ -25,6 +25,8 @@ jobs:
     steps:
       - attach_workspace:
           at: dist
+      - run: npm init -y
+      - run: npm i -D gh-pages
       - run:
           name: Deploy to gh-pages branch
           command: npx gh-pages --dist dist
