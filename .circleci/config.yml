@@ -28,8 +28,8 @@ jobs:
       - run: pwd
       - run: ls
       - run:
-          name: Install and configure dependencies
-          command: npm install -g --silent gh-pages
+          name: Install gh-pages package
+          command: npm i -g gh-pages
       - run:
           name: Deploy to gh-pages branch
           command: gh-pages --dist dist
