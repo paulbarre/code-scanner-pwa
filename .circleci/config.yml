@@ -14,17 +14,17 @@ jobs:
           name: Build application
           command: npm run build
       - persist_to_workspace:
-          root: "~/repo"
+          root: ~/project
           paths:
             - "dist"
 
   deploy-gh-pages:
     docker:
-      - image: cimg/node:16
-    working_directory: ~/repo
+      - image: node:16-alpine3.14
+        user: node
     steps:
       - attach_workspace:
-          at: "dist"
+          at: dist
       - run:
           name: Install and configure dependencies
           command:
