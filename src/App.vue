@@ -1,7 +1,6 @@
 <template>
   <div id="app">
     <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
     <div v-if="supported">
       <div v-if="!isReady">Loading</div>
       <div v-else>
@@ -12,17 +11,18 @@
     <div v-else>
       Sorry. This application is not supported by your device.
     </div>
+    <Locale />
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue';
 import Detector from '@/model/Detector';
+import Locale from './components/Locale.vue';
 
 export default {
   name: 'App',
   components: {
-    HelloWorld,
+    Locale,
   },
   data() {
     return {
