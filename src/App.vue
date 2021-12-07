@@ -3,24 +3,27 @@
     <div v-if="supported">
       <div v-if="!isReady">Loading</div>
       <div v-else>
+        <Camera />
         <video ref="video" autoplay></video>
         <div>Supported formats: {{ detector.supportedFormats.join(', ') }}</div>
       </div>
     </div>
     <div v-else>
-      Sorry. This application is not supported by your device.
+      Sorry. This application is not supported by your browser.
     </div>
     <Locale />
   </div>
 </template>
 
 <script>
+import Camera from '@/components/Camera.vue';
 import Locale from '@/components/Locale.vue';
 import Detector from '@/model/Detector';
 
 export default {
   name: 'App',
   components: {
+    Camera,
     Locale,
   },
   data() {
