@@ -3,6 +3,10 @@
     <AppBar />
 
     <v-main>
+      <div
+        v-if="!supported"
+        class="pa-4 font-weight-black"
+      >{{ $t('bad_browser') }}</div>
     </v-main>
   </v-app>
 </template>
@@ -13,21 +17,11 @@ import Detector from '@/model/Detector';
 
 export default {
   name: 'App',
-
   components: {
     AppBar,
   },
-  data() {
-    return {
-      isReady: false,
-    };
-  },
   created() {
     this.supported = Detector.supported;
-    this.detector = new Detector();
-    this.detector.isReady.then(() => {
-      this.isReady = true;
-    });
   },
 };
 </script>
