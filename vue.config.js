@@ -2,9 +2,11 @@ module.exports = {
   publicPath: process.env.NODE_ENV === 'production'
     ? '/code-scanner-pwa/'
     : '/',
+
   devServer: {
     port: 7100,
   },
+
   pluginOptions: {
     i18n: {
       locale: 'en',
@@ -14,4 +16,8 @@ module.exports = {
       enableBridge: false,
     },
   },
+
+  transpileDependencies: [
+    'vuetify',
+  ],
 };
