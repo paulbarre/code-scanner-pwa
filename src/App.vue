@@ -4,7 +4,6 @@
       <div v-if="!isReady">Loading</div>
       <div v-else>
         <Camera />
-        <video ref="video" autoplay></video>
         <div>Supported formats: {{ detector.supportedFormats.join(', ') }}</div>
       </div>
     </div>
@@ -36,19 +35,7 @@ export default {
     this.detector = new Detector();
     this.detector.isReady.then(() => {
       this.isReady = true;
-      this.createVideoStream();
     });
-  },
-  methods: {
-    async createVideoStream() {
-      const videoStream = await navigator.mediaDevices.getUserMedia({
-        video: true,
-      });
-      console.log(videoStream);
-      if (videoStream) {
-        this.$refs.video.srcObject = videoStream;
-      }
-    },
   },
 };
 </script>

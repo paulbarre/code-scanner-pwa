@@ -1,5 +1,8 @@
 <template>
-  <div>Camera allowed: {{ cameraAllowed }}</div>
+  <div>
+    <div>Camera allowed: {{ cameraAllowed }}</div>
+    <video ref="video" autoplay></video>
+  </div>
 </template>
 
 <script>
@@ -8,6 +11,13 @@ export default {
     return {
       cameraAllowed: false,
     };
+  },
+  watch: {
+    cameraAllowed(val) {
+      if (val) {
+        this.createVideoStream();
+      }
+    },
   },
   mounted() {
     this.listenPermissions();
@@ -23,6 +33,14 @@ export default {
         const newState = e.target.state;
         this.cameraAllowed = newState !== 'denied';
       });
+    },
+    async createVideoStream() {
+      const videoStream = await navigator.mediaDevices.getUserMedia({
+        video: true,
+      });
+      if (videoStream) {
+        this.$refs.video.srcObject = videoStream;
+      }
     },
   },
 };
