@@ -1,6 +1,5 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
     <div v-if="supported">
       <div v-if="!isReady">Loading</div>
       <div v-else>
@@ -16,8 +15,8 @@
 </template>
 
 <script>
+import Locale from '@/components/Locale.vue';
 import Detector from '@/model/Detector';
-import Locale from './components/Locale.vue';
 
 export default {
   name: 'App',
