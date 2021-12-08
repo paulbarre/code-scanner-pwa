@@ -16,6 +16,8 @@ export const FORMATS = Object.freeze({
 });
 
 export default class Detector {
+  #barcodeDetector
+
   #supportedFormats
 
   #initPromise
@@ -33,12 +35,35 @@ export default class Detector {
   }
 
   constructor() {
-    this.#initPromise = Promise.all([
-      this.#getSupportedFormats(),
-    ]);
+    this.#initPromise = this.#init();
   }
 
-  #getSupportedFormats = async () => {
+  async detect(videoElement) {
+    return new Promise((resolve) => {
+      if (!this.#barcodeDetector) {
+        resolve([]);
+        return;
+      }
+      const loop = () => {
+        this.#barcodeDetector.detect(videoElement).then((barcodes) => {
+          resolve(barcodes); // TEMP- For dev
+          // if (barcodes.length > 0) {
+          //   resolve(barcodes);
+          // } else {
+          //   requestAnimationFrame(loop);
+          // }
+        }).catch((err) => {
+          console.log('Error', err.message);
+        });
+      };
+      loop();
+    });
+  }
+
+  #init = async () => {
     this.#supportedFormats = await window.BarcodeDetector.getSupportedFormats();
+    this.#barcodeDetector = new window.BarcodeDetector({
+      formats: this.#supportedFormats,
+    });
   }
 }

@@ -1,23 +1,52 @@
 <template>
-  <div>
-    <div>Camera allowed: {{ cameraAllowed }}</div>
-    <video ref="video" autoplay></video>
+  <div class="wrapper">
+    <div
+      v-show="cameraPermission !== PERMISSIONS.GRANTED"
+      class="font-weight-black message"
+    >{{ $t('camera_not_allowed') }}</div>
+    <video id="video" ref="video" autoplay @loadeddata="onVideoStateChange"></video>
   </div>
 </template>
 
 <script>
+const PERMISSIONS = Object.freeze({
+  GRANTED: 'granted',
+  DENIED: 'denied',
+  PROMPT: 'prompt',
+});
+
+const MEDIA_STATE = Object.freeze({
+  HAVE_NOTHING: 0,
+  HAVE_METADATA: 1,
+  HAVE_CURRENT_DATA: 2,
+  HAVE_FUTURE_DATA: 3,
+  HAVE_ENOUGH_DATA: 4,
+});
+
 export default {
   data() {
     return {
-      cameraAllowed: false,
+      cameraPermission: null,
+      started: false,
     };
   },
   watch: {
-    cameraAllowed(val) {
-      if (val) {
+    cameraPermission(val) {
+      if (val !== PERMISSIONS.DENIED && this.started) {
         this.createVideoStream();
       }
     },
+    started(val) {
+      // There are some cases state is `prompt`, but we need to ask for media to
+      // show the prompt.
+      if (val && this.cameraPermission !== PERMISSIONS.DENIED) {
+        this.createVideoStream();
+      }
+    },
+  },
+  created() {
+    this.videoStream = null;
+    this.PERMISSIONS = PERMISSIONS;
   },
   mounted() {
     this.listenPermissions();
@@ -25,23 +54,80 @@ export default {
   methods: {
     async listenPermissions() {
       const permissions = await navigator.permissions.query({ name: 'camera' });
-      this.cameraAllowed = permissions.state !== 'denied';
+      this.cameraPermission = permissions.state;
       permissions.onchange = ((e) => {
         if (e.type !== 'change') {
           return;
         }
         const newState = e.target.state;
-        this.cameraAllowed = newState !== 'denied';
+        this.cameraPermission = newState;
       });
     },
     async createVideoStream() {
-      const videoStream = await navigator.mediaDevices.getUserMedia({
-        video: true,
+      if (this.creatingStream || this.videoStream) {
+        return;
+      }
+      try {
+        this.creatingStream = true;
+        this.videoStream = await navigator.mediaDevices.getUserMedia({
+          video: true,
+        });
+      } catch (err) {
+        this.videoStream = null;
+      } finally {
+        this.creatingStream = false;
+        this.$refs.video.srcObject = this.videoStream;
+      }
+    },
+    stopVideoStream() {
+      const tracks = this.videoStream?.getTracks() ?? [];
+      tracks.forEach((track) => {
+        track.stop();
       });
-      if (videoStream) {
-        this.$refs.video.srcObject = videoStream;
+      this.videoStream = null;
+      this.$refs.video.srcObject = null;
+    },
+    start() {
+      this.started = true;
+    },
+    pause() {
+      this.$refs.video.pause();
+    },
+    stop() {
+      this.started = false;
+      this.stopVideoStream();
+    },
+    onVideoStateChange() {
+      if (this.$refs.video.readyState === MEDIA_STATE.HAVE_ENOUGH_DATA) {
+        this.$emit('ready', this.$refs.video);
       }
     },
   },
 };
 </script>
+
+<style scoped>
+.wrapper {
+  border-radius: 1rem;
+  border: 0.2rem solid white;
+  width: 300px;
+  height: 300px;
+  max-width: 90vw;
+  max-height: 90vw;
+  margin: 0 auto;
+  position: relative;
+}
+
+.wrapper video {
+  width: 100%;
+  height: 100%;
+}
+
+.message {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+</style>
