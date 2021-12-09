@@ -5,6 +5,9 @@
     <v-main>
       <template v-if="supported">
         <Camera class="mt-6" ref="camera" @ready="startDetection" />
+        <div class="d-flex justify-center mt-16">
+          <v-progress-circular width="2" indeterminate v-show="loading"></v-progress-circular>
+        </div>
         <DetectionResult ref="results" @close="startCamera" />
       </template>
       <div
@@ -31,6 +34,7 @@ export default {
   data() {
     return {
       detectorIsReady: false,
+      loading: true,
     };
   },
   created() {
@@ -49,15 +53,23 @@ export default {
   },
   methods: {
     startCamera() {
+      this.loading = true;
       this.$refs.camera.start();
     },
     stopCamera() {
       this.$refs.camera.stop();
     },
     async startDetection(element) {
-      console.log('start detect');
       await this.detector.isReady;
-      const codes = await this.detector.detect(element);
+      this.loading = false;
+      const codes = (await this.detector.detect(element))
+        // It happens code are doubled. Reduce to avoid duplications
+        .reduce((list, curr) => {
+          if (list.map((code) => code.rawValue).includes(curr.rawValue)) {
+            return list;
+          }
+          return [...list, curr];
+        }, []);
       if (codes.length > 0) {
         this.$refs.results.show(codes);
         this.stopCamera();

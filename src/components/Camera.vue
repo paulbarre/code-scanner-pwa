@@ -113,7 +113,7 @@ export default {
 <style scoped>
 .wrapper {
   border-radius: 1rem;
-  border: 0.2rem solid white;
+  border: 2px solid white;
   width: 300px;
   height: 300px;
   max-width: 90vw;

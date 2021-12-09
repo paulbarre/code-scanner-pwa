@@ -1,16 +1,29 @@
 <template>
-  <v-bottom-sheet v-model="visible">
-    <v-list height="80vh" class="overflow-y-auto">
-      <v-subheader>{{ results.length }} codes found</v-subheader>
-      <div v-for="({ rawValue, format }, index) in results" :key="`result-${index}`">
-        <ResultListItem
-          :rawValue="rawValue"
-          :format="format"
-        />
-        <v-divider></v-divider>
-      </div>
-    </v-list>
-  </v-bottom-sheet>
+  <v-dialog v-model="visible" fullscreen>
+    <v-card>
+      <v-toolbar dark flat>
+        <v-toolbar-title>{{ results.length }} codes found</v-toolbar-title>
+        <v-spacer></v-spacer>
+        <v-btn icon @click="visible = false">
+          <v-icon>mdi-close</v-icon>
+        </v-btn>
+      </v-toolbar>
+      <v-list class="overflow-y-auto">
+        <div v-for="({ rawValue, format }, index) in results" :key="`result-${index}`">
+          <ResultListItem
+            :rawValue="rawValue"
+            :format="format"
+            @copy="copySnackbar = true"
+          />
+          <v-divider></v-divider>
+        </div>
+      </v-list>
+    </v-card>
+
+    <v-snackbar v-model="copySnackbar" timeout="2000">
+      <span>Text copied</span>
+    </v-snackbar>
+  </v-dialog>
 </template>
 
 <script>
@@ -24,6 +37,7 @@ export default {
     return {
       visible: false,
       results: [],
+      copySnackbar: false,
     };
   },
   watch: {
@@ -39,7 +53,6 @@ export default {
       if (results.length === 0) {
         return;
       }
-      console.log(results);
       this.results = results;
       this.visible = true;
     },

@@ -9,7 +9,7 @@
         <v-btn v-if="isURL" :href="rawValue" target="_blank" icon>
           <v-icon small>mdi-open-in-new</v-icon>
         </v-btn>
-        <v-btn icon>
+        <v-btn icon @click="copyToClipboard" class="ml-2">
           <v-icon small>mdi-content-copy</v-icon>
         </v-btn>
       </div>
@@ -35,6 +35,12 @@ export default {
   computed: {
     isURL() {
       return this.rawValue.match(/^https?:\/\/.+$/);
+    },
+  },
+  methods: {
+    copyToClipboard() {
+      navigator.clipboard.writeText(this.rawValue);
+      this.$emit('copy');
     },
   },
 };
