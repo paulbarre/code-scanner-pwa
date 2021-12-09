@@ -46,12 +46,12 @@ export default class Detector {
       }
       const loop = () => {
         this.#barcodeDetector.detect(videoElement).then((barcodes) => {
-          resolve(barcodes); // TEMP- For dev
-          // if (barcodes.length > 0) {
-          //   resolve(barcodes);
-          // } else {
-          //   requestAnimationFrame(loop);
-          // }
+          // resolve(barcodes); // TEMP- For dev
+          if (barcodes.length > 0) {
+            resolve(barcodes);
+          } else {
+            requestAnimationFrame(loop);
+          }
         }).catch((err) => {
           console.log('Error', err.message);
         });

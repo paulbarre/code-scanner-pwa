@@ -4,8 +4,8 @@
 
     <v-main>
       <template v-if="supported">
-        <Camera ref="camera" @ready="startDetection" />
-        <DetectionResult />
+        <Camera class="mt-6" ref="camera" @ready="startDetection" />
+        <DetectionResult ref="results" @close="startCamera" />
       </template>
       <div
         v-else
@@ -51,16 +51,17 @@ export default {
     startCamera() {
       this.$refs.camera.start();
     },
-    pauseCamera() {
-      this.$refs.camera.pause();
+    stopCamera() {
+      this.$refs.camera.stop();
     },
     async startDetection(element) {
+      console.log('start detect');
       await this.detector.isReady;
       const codes = await this.detector.detect(element);
-      codes.forEach((code) => {
-        console.log(code);
-      });
-      this.pauseCamera();
+      if (codes.length > 0) {
+        this.$refs.results.show(codes);
+        this.stopCamera();
+      }
     },
   },
 };

@@ -88,6 +88,10 @@ export default {
       this.$refs.video.srcObject = null;
     },
     start() {
+      if (this.started && this.$refs.video.paused) {
+        this.$refs.video.play();
+        return;
+      }
       this.started = true;
     },
     pause() {
