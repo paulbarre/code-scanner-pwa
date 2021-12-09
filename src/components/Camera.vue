@@ -70,7 +70,11 @@ export default {
       try {
         this.creatingStream = true;
         this.videoStream = await navigator.mediaDevices.getUserMedia({
-          video: true,
+          video: {
+            width: { ideal: 1280 },
+            height: { ideal: 720 },
+            facingMode: { exact: "environment" },
+          },
         });
       } catch (err) {
         this.videoStream = null;
