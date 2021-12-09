@@ -6,7 +6,7 @@
     </v-list-item-content>
     <v-list-item-action>
       <div>
-        <v-btn icon>
+        <v-btn v-if="isURL" :href="rawValue" target="_blank" icon>
           <v-icon small>mdi-open-in-new</v-icon>
         </v-btn>
         <v-btn icon>
@@ -30,6 +30,11 @@ export default {
       type: String,
       required: true,
       validator: (val) => Object.values(FORMATS).includes(val),
+    },
+  },
+  computed: {
+    isURL() {
+      return this.rawValue.match(/^https?:\/\/.+$/);
     },
   },
 };
