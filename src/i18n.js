@@ -20,7 +20,6 @@ function loadLocaleMessages() {
 }
 
 const browserLanguage = navigator.language.match(/[a-z]+/)?.[0];
-console.log(navigator.language, browserLanguage);
 
 const currentLocale = localStorage.getItem(STORAGE_KEY)
   || process.env.VUE_APP_I18N_LOCALE
