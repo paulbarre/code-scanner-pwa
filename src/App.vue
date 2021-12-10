@@ -19,6 +19,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
 import AppBar from '@/components/AppBar.vue';
 import Camera from '@/components/Camera.vue';
 import DetectionResult from '@/components/DetectionResult.vue';
@@ -39,8 +40,12 @@ export default {
       deviceId: null,
     };
   },
+  computed: {
+    ...mapState('detector', ['supported']),
+  },
   created() {
-    this.supported = Detector.supported;
+    console.log(this.$store.state);
+    // this.supported = Detector.supported;
     if (this.supported) {
       this.detector = new Detector();
       this.detector.isReady.then(() => {
