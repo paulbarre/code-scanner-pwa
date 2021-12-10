@@ -1,10 +1,10 @@
 <template>
   <v-app dark>
-    <AppBar />
+    <AppBar :running-device="deviceId" />
 
     <v-main>
       <template v-if="supported">
-        <Camera class="mt-6" ref="camera" @ready="startDetection" />
+        <Camera class="mt-6" ref="camera" @ready="startDetection" @open="onOpenVideo" />
         <div class="d-flex justify-center mt-16">
           <v-progress-circular width="2" indeterminate v-show="loading"></v-progress-circular>
         </div>
@@ -35,6 +35,8 @@ export default {
     return {
       detectorIsReady: false,
       loading: true,
+      // TODO- Do something better
+      deviceId: null,
     };
   },
   created() {
@@ -52,6 +54,9 @@ export default {
     }
   },
   methods: {
+    onOpenVideo(deviceId) {
+      this.deviceId = deviceId;
+    },
     startCamera() {
       this.loading = true;
       this.$refs.camera.start();

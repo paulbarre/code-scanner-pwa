@@ -1,7 +1,7 @@
 <template>
   <div class="wrapper">
     <div
-      v-show="cameraPermission !== PERMISSIONS.GRANTED"
+      v-show="!allowed"
       class="font-weight-black message"
     >{{ $t('camera_not_allowed') }}</div>
     <video id="video" ref="video" autoplay @loadeddata="onVideoStateChange"></video>
@@ -9,11 +9,7 @@
 </template>
 
 <script>
-const PERMISSIONS = Object.freeze({
-  GRANTED: 'granted',
-  DENIED: 'denied',
-  PROMPT: 'prompt',
-});
+import videoCamera from '@/mixins/videoCamera';
 
 const MEDIA_STATE = Object.freeze({
   HAVE_NOTHING: 0,
@@ -24,45 +20,35 @@ const MEDIA_STATE = Object.freeze({
 });
 
 export default {
+  mixins: [videoCamera],
   data() {
     return {
-      cameraPermission: null,
       started: false,
     };
   },
   watch: {
-    cameraPermission(val) {
-      if (val !== PERMISSIONS.DENIED && this.started) {
-        this.createVideoStream();
-      }
+    allowed: {
+      handler(val) {
+        if (val && this.started) {
+          this.createVideoStream();
+        } else if (!val) {
+          this.stopVideoStream();
+        }
+      },
+      immediate: true,
     },
     started(val) {
       // There are some cases state is `prompt`, but we need to ask for media to
       // show the prompt.
-      if (val && this.cameraPermission !== PERMISSIONS.DENIED) {
+      if (val && this.allowed) {
         this.createVideoStream();
       }
     },
   },
   created() {
     this.videoStream = null;
-    this.PERMISSIONS = PERMISSIONS;
-  },
-  mounted() {
-    this.listenPermissions();
   },
   methods: {
-    async listenPermissions() {
-      const permissions = await navigator.permissions.query({ name: 'camera' });
-      this.cameraPermission = permissions.state;
-      permissions.onchange = ((e) => {
-        if (e.type !== 'change') {
-          return;
-        }
-        const newState = e.target.state;
-        this.cameraPermission = newState;
-      });
-    },
     async createVideoStream() {
       if (this.creatingStream || this.videoStream) {
         return;
@@ -73,9 +59,11 @@ export default {
           video: {
             width: { ideal: 1280 },
             height: { ideal: 720 },
-            facingMode: { exact: 'environment' },
+            facingMode: { ideal: 'environment' },
           },
         });
+        const deviceId = this.videoStream.getVideoTracks()?.[0]?.getSettings()?.deviceId;
+        this.$emit('open', deviceId);
       } catch (err) {
         this.videoStream = null;
       } finally {
@@ -84,7 +72,7 @@ export default {
       }
     },
     stopVideoStream() {
-      const tracks = this.videoStream?.getTracks() ?? [];
+      const tracks = this.videoStream?.getVideoTracks() ?? [];
       tracks.forEach((track) => {
         track.stop();
       });
@@ -116,19 +104,19 @@ export default {
 
 <style scoped>
 .wrapper {
-  border-radius: 1rem;
-  border: 2px solid white;
-  width: 300px;
-  height: 300px;
-  max-width: 90vw;
-  max-height: 90vw;
+  border-radius: 0.5rem;
+  width: 100vw;
+  max-width: 1000px;
+  height: 70vh;
   margin: 0 auto;
   position: relative;
+  overflow: hidden;
 }
 
 .wrapper video {
   width: 100%;
   height: 100%;
+  object-fit: cover;
 }
 
 .message {
