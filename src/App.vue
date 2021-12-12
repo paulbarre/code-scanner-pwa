@@ -4,11 +4,11 @@
 
     <v-main>
       <template v-if="supported">
-        <Camera class="mt-6" ref="camera" @ready="startDetection" @open="onOpenVideo" />
+        <Camera class="mt-6" ref="camera" />
         <div class="d-flex justify-center mt-16">
           <v-progress-circular width="2" indeterminate v-show="loading"></v-progress-circular>
         </div>
-        <DetectionResult ref="results" @close="startCamera" />
+        <DetectionResult ref="results"  />
       </template>
       <div
         v-else
@@ -44,18 +44,18 @@ export default {
     ...mapState('detector', ['supported']),
   },
   created() {
-    console.log(this.$store.state);
+    // console.log(this.$store.state);
     // this.supported = Detector.supported;
-    if (this.supported) {
-      this.detector = new Detector();
-      this.detector.isReady.then(() => {
-        this.detectorIsReady = true;
-      });
-    }
+    // if (this.supported) {
+    //   this.detector = new Detector();
+    //   this.detector.isReady.then(() => {
+    //     this.detectorIsReady = true;
+    //   });
+    // }
   },
   mounted() {
     if (this.supported) {
-      this.startCamera();
+      // this.startCamera();
     }
   },
   methods: {
@@ -64,10 +64,10 @@ export default {
     },
     startCamera() {
       this.loading = true;
-      this.$refs.camera.start();
+      // this.$refs.camera.start();
     },
     stopCamera() {
-      this.$refs.camera.stop();
+      // this.$refs.camera.stop();
     },
     async startDetection(element) {
       await this.detector.isReady;

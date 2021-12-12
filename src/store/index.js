@@ -1,8 +1,19 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import detector from './modules/detector';
+import modules from './modules';
 
 Vue.use(Vuex);
+
+const plugins = Object.values(modules).reduce(
+  (modulePlugins, module) => {
+    console.log(module);
+    return (module.plugins
+      ? [...modulePlugins, ...module.plugins]
+      : modulePlugins);
+  },
+  [],
+);
+// console.log(Object.values(modules));
 
 export default new Vuex.Store({
   state: {
@@ -11,10 +22,6 @@ export default new Vuex.Store({
   },
   actions: {
   },
-  modules: {
-    detector,
-  },
-  plugins: [
-    ...detector.plugins,
-  ],
+  modules,
+  plugins,
 });

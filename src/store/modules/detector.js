@@ -16,7 +16,7 @@ export default {
         const supportedFormats = await window.BarcodeDetector.getSupportedFormats();
         commit('setSupportedFormats', supportedFormats);
       } catch (err) {
-        console.error('Impossible to get supported formats');
+        console.error('Impossible to get supported formats.', err.message);
         commit('setSupportedFormats', []);
       }
     },
@@ -28,8 +28,10 @@ export default {
     },
   },
   plugins: [
-    (store) => {
-      store.dispatch('detector/init');
+    ({ state, dispatch }) => {
+      if (state.detector.supported) {
+        dispatch('detector/loadSupportedFormats');
+      }
     },
   ],
 };
