@@ -31,7 +31,7 @@ export default {
           video: {
             width: { ideal: 1280 },
             height: { ideal: 720 },
-            facingMode: { ideal: 'environment' },
+            ...(!deviceId && { facingMode: { ideal: 'environment' } }),
             ...(deviceId && { deviceId: { exact: deviceId } }),
           },
         });
@@ -39,6 +39,7 @@ export default {
         commit('setDeviceId', track?.getSettings()?.deviceId ?? null);
       } catch (err) {
         console.error('Impossible to create video stream.', err.message);
+        alert('Impossible to create video stream.', err.message);
         this.stream = null;
         commit('setDeviceId', null);
       }
