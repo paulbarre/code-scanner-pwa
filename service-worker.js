@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/code-scanner-pwa/precache-manifest.b4525c2b689357c3596487937a1a0d62.js"
+  "/code-scanner-pwa/precache-manifest.37a6aa1a99d1999f17c85fcc235bd90e.js"
 );
 
 workbox.core.setCacheNameDetails({prefix: "code-scanner-pwa"});
