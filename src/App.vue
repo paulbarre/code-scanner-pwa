@@ -1,14 +1,14 @@
 <template>
   <v-app dark>
-    <AppBar :running-device="deviceId" />
+    <AppBar />
 
     <v-main>
       <template v-if="supported">
-        <Camera class="mt-6" ref="camera" @ready="startDetection" @open="onOpenVideo" />
+        <Camera class="mt-6" ref="camera" />
         <div class="d-flex justify-center mt-16">
           <v-progress-circular width="2" indeterminate v-show="loading"></v-progress-circular>
         </div>
-        <DetectionResult ref="results" @close="startCamera" />
+        <DetectionResult ref="results" @close="playCamera" />
       </template>
       <div
         v-else
@@ -19,10 +19,10 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
 import AppBar from '@/components/AppBar.vue';
 import Camera from '@/components/Camera.vue';
 import DetectionResult from '@/components/DetectionResult.vue';
-import Detector from '@/model/Detector';
 
 export default {
   name: 'App',
@@ -33,41 +33,24 @@ export default {
   },
   data() {
     return {
-      detectorIsReady: false,
       loading: true,
-      // TODO- Do something better
-      deviceId: null,
     };
   },
-  created() {
-    this.supported = Detector.supported;
-    if (this.supported) {
-      this.detector = new Detector();
-      this.detector.isReady.then(() => {
-        this.detectorIsReady = true;
-      });
-    }
+  computed: {
+    ...mapState('detector', ['supported', 'ready']),
+    ...mapState('videoStream', ['detectable']),
   },
-  mounted() {
-    if (this.supported) {
-      this.startCamera();
-    }
+  watch: {
+    detectable: 'startDetection',
+    ready: 'startDetection',
   },
   methods: {
-    onOpenVideo(deviceId) {
-      this.deviceId = deviceId;
-    },
-    startCamera() {
-      this.loading = true;
-      this.$refs.camera.start();
-    },
-    stopCamera() {
-      this.$refs.camera.stop();
-    },
-    async startDetection(element) {
-      await this.detector.isReady;
+    async startDetection() {
+      if (!this.ready || !this.detectable) {
+        return;
+      }
       this.loading = false;
-      const codes = (await this.detector.detect(element))
+      const codes = (await this.$store.dispatch('detector/startDetection'))
         // It happens code are doubled. Reduce to avoid duplications
         .reduce((list, curr) => {
           if (list.map((code) => code.rawValue).includes(curr.rawValue)) {
@@ -77,8 +60,12 @@ export default {
         }, []);
       if (codes.length > 0) {
         this.$refs.results.show(codes);
-        this.stopCamera();
+        this.$refs.camera.pause();
       }
+    },
+    playCamera() {
+      this.$refs.camera.play();
+      this.startDetection();
     },
   },
 };
