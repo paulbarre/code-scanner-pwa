@@ -15,24 +15,28 @@ export default {
     },
   },
   actions: {
-    async loadDevices() {
+    async load({ commit }) {
       try {
-        const devices = await navigator.mediaDevices.enumerateDevices();
-        this.videoDevices = devices
+        const allDevices = await navigator.mediaDevices.enumerateDevices();
+        const videoDevices = allDevices
           .filter(({ kind, label }) => kind === DEVICE_KINDS.VIDEOINPUT && label);
-        console.log('Video devices', this.videoDevices);
+        commit('setDevices', videoDevices);
       } catch (err) {
-        console.error('Failed to enumerate devices');
-        this.videoDevices = [];
+        console.error('Failed to enumerate devices:', err.message);
+        commit('setDevices', []);
       }
-    },
-    async init({ dispatch }) {
-      await dispatch('loadDevices');
     },
   },
   plugins: [
     (store) => {
-      store.dispatch('devices/init');
+      store.subscribe((mutation, state) => {
+        if (
+          mutation.type === 'permissions/update'
+          && state.permissions.cameraGranted
+        ) {
+          store.dispatch('devices/load');
+        }
+      });
     },
   ],
 };

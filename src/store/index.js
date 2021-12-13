@@ -5,15 +5,11 @@ import modules from './modules';
 Vue.use(Vuex);
 
 const plugins = Object.values(modules).reduce(
-  (modulePlugins, module) => {
-    console.log(module);
-    return (module.plugins
-      ? [...modulePlugins, ...module.plugins]
-      : modulePlugins);
-  },
+  (modulePlugins, module) => (module.plugins
+    ? [...modulePlugins, ...module.plugins]
+    : modulePlugins),
   [],
 );
-// console.log(Object.values(modules));
 
 export default new Vuex.Store({
   state: {
