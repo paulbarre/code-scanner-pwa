@@ -39,7 +39,7 @@ export default {
         commit('setDeviceId', track?.getSettings()?.deviceId ?? null);
       } catch (err) {
         console.error('Impossible to create video stream.', err.message);
-        alert('Impossible to create video stream.', err.message);
+        alert(`Impossible to create video stream. ${err.message}`);
         this.stream = null;
         commit('setDeviceId', null);
       }
