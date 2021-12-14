@@ -37,23 +37,24 @@ export default {
   data() {
     return {
       opened: false,
+      current: null,
     };
   },
   computed: {
     ...mapState('devices', ['devices']),
     ...mapState('videoStream', ['deviceId']),
-    current: {
-      get() {
-        return this.deviceId;
-      },
-      set(val) {
-        if (val && val !== this.deviceId) {
-          this.$store.dispatch('videoStream/createStream', val);
-        }
-      },
-    },
     hasSelection() {
       return this.devices.length > 1;
+    },
+  },
+  watch: {
+    deviceId(val) {
+      if (!this.current) {
+        this.current = val;
+      }
+    },
+    current(val) {
+      this.$store.dispatch('videoStream/createStream', val);
     },
   },
 };
