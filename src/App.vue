@@ -65,7 +65,7 @@ export default {
     },
     playCamera() {
       this.$refs.camera.play();
-      this.startDetection();
+      // this.startDetection();
     },
   },
 };
