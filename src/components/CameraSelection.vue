@@ -53,8 +53,10 @@ export default {
         this.current = val;
       }
     },
-    current(val) {
-      this.$store.dispatch('videoStream/createStream', val);
+    current(newVal, oldVal) {
+      if (oldVal) {
+        this.$store.dispatch('videoStream/createStream', newVal);
+      }
     },
   },
 };

@@ -27,7 +27,6 @@ export default {
         await dispatch('releaseStream');
       }
       try {
-        alert(deviceId);
         this.stream = await navigator.mediaDevices.getUserMedia({
           video: {
             width: { ideal: 1280 },
@@ -40,13 +39,12 @@ export default {
         commit('setDeviceId', track?.getSettings()?.deviceId ?? null);
       } catch (err) {
         console.error('Impossible to create video stream.', err.message);
-        alert(`Impossible to create video stream. ${err.message}`);
         this.stream = null;
         commit('setDeviceId', null);
       }
     },
     releaseStream({ commit }) {
-      const tracks = this.videoStream?.getTracks() ?? [];
+      const tracks = this.stream?.getTracks() ?? [];
       tracks.forEach((track) => {
         track.stop();
       });
