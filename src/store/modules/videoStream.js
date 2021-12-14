@@ -45,7 +45,7 @@ export default {
       }
     },
     releaseStream({ commit }) {
-      const tracks = this.videoStream?.getVideoTracks() ?? [];
+      const tracks = this.videoStream?.getTracks() ?? [];
       tracks.forEach((track) => {
         track.stop();
       });
