@@ -27,6 +27,7 @@ export default {
         await dispatch('releaseStream');
       }
       try {
+        alert(deviceId);
         this.stream = await navigator.mediaDevices.getUserMedia({
           video: {
             width: { ideal: 1280 },
