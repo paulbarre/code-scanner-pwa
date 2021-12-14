@@ -32,7 +32,7 @@ export default {
             width: { ideal: 1280 },
             height: { ideal: 720 },
             ...(!deviceId && { facingMode: { ideal: 'environment' } }),
-            deviceId, //...(deviceId && { deviceId: { exact: deviceId } }),
+            deviceId,
           },
         });
         const track = this.stream.getVideoTracks()?.[0];
